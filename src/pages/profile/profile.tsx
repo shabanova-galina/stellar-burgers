@@ -1,12 +1,11 @@
+import { useSelector, useDispatch } from '@/services/store';
+import { updateUser } from '@/slices/authSlice';
 import { ProfileUI } from '@ui-pages';
 import { type SyntheticEvent, useEffect, useState } from 'react';
 
 export const Profile = (): React.JSX.Element => {
-  /** TODO: Взять переменную из стора */
-  const user = {
-    name: '',
-    email: '',
-  };
+  const user = useSelector((state) => state.auth.user);
+  const dispatch = useDispatch();
 
   const [formValue, setFormValue] = useState({
     name: user.name,
@@ -27,8 +26,17 @@ export const Profile = (): React.JSX.Element => {
     formValue.email !== user?.email ||
     !!formValue.password;
 
-  const handleSubmit = (e: SyntheticEvent): void => {
+  const handleSubmit = async (e: SyntheticEvent): Promise<void> => {
     e.preventDefault();
+    try {
+      await dispatch(updateUser(formValue)).unwrap();
+      setFormValue((prevState) => ({
+        ...prevState,
+        password: '',
+      }));
+    } catch (error) {
+      console.error('Ошибка обновления профиля:', error);
+    }
   };
 
   const handleCancel = (e: SyntheticEvent): void => {
@@ -52,7 +60,9 @@ export const Profile = (): React.JSX.Element => {
       formValue={formValue}
       isFormChanged={isFormChanged}
       handleCancel={handleCancel}
-      handleSubmit={handleSubmit}
+      handleSubmit={(e) => {
+        void handleSubmit(e);
+      }}
       handleInputChange={handleInputChange}
     />
   );

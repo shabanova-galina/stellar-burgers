@@ -1,19 +1,26 @@
+import { useDispatch, useSelector } from '@/services/store';
+import { getUser } from '@/slices/authSlice';
+import { getIngredients } from '@/slices/ingredientSlice';
 import { AppHeader } from '@components';
-import { ConstructorPage } from '@pages';
-import { Preloader } from '@ui';
-import { Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
 
-import type { AppContentProps } from './type';
-import type { TIngredient } from '@utils-types';
+import { AppContent } from '../app-content';
 
 import '../../index.css';
 
 import styles from './app.module.css';
 
 const App = (): React.JSX.Element => {
-  const ingredients: TIngredient[] = [];
-  const isIngredientsLoading = false;
-  const ingredientsError = null;
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    void dispatch(getIngredients());
+    void dispatch(getUser());
+  }, [dispatch]);
+
+  const ingredients = useSelector((state) => state.ingredients.data);
+  const isIngredientsLoading = useSelector((state) => state.ingredients.isLoading);
+  const ingredientsError = useSelector((state) => state.ingredients.error);
 
   return (
     <div className={styles.app}>
@@ -26,44 +33,4 @@ const App = (): React.JSX.Element => {
     </div>
   );
 };
-
 export default App;
-
-/* Маршруты показываются только когда ингредиенты загружены: без них не
-   отрисовать ни конструктор, ни состав заказа. */
-const AppContent = ({
-  ingredients,
-  isLoading,
-  error,
-}: AppContentProps): React.JSX.Element => {
-  if (isLoading) {
-    return <Preloader />;
-  }
-
-  if (error) {
-    return (
-      <p className={`${styles.message} text text_type_main-medium`}>
-        Не удалось загрузить ингредиенты
-        {error.message ? `: ${error.message}` : '.'}
-      </p>
-    );
-  }
-
-  if (!ingredients.length) {
-    return (
-      <p className={`${styles.message} text text_type_main-medium`}>Нет ингредиентов</p>
-    );
-  }
-
-  return <RouteComponent />;
-};
-
-const RouteComponent = (): React.JSX.Element => {
-  return (
-    <>
-      <Routes>
-        <Route path="/" element={<ConstructorPage />} />
-      </Routes>
-    </>
-  );
-};

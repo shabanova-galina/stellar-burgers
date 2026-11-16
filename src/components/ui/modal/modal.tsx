@@ -15,7 +15,15 @@ export const ModalUI = memo(function ModalUI({
     <>
       <div className={styles.modal}>
         <div className={styles.header}>
-          <h3 className="text text_type_main-large">{title}</h3>
+          <h3
+            className={`text ${
+              typeof title === 'string' && title.startsWith('#')
+                ? 'text_type_digits-default'
+                : 'text_type_main-large'
+            }`}
+          >
+            {title}
+          </h3>
           <button className={styles.button} type="button" aria-label="Закрыть">
             <CloseIcon type="primary" onClick={onClose} />
           </button>
