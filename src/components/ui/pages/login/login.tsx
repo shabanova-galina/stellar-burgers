@@ -1,8 +1,4 @@
-import {
-  Input,
-  Button,
-  //PasswordInput,
-} from '@krgaa/react-developer-burger-ui-components';
+import { Input, Button } from '@krgaa/react-developer-burger-ui-components';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -18,7 +14,6 @@ export const LoginUI = ({
   password,
   setPassword,
 }: LoginUIProps): React.JSX.Element => {
-  // Стейт для переключения видимости пароля (глазик)
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   return (
@@ -46,7 +41,6 @@ export const LoginUI = ({
                 onChange={(e) => setPassword(e.target.value)}
                 value={password}
                 name="password"
-                // Красная рамка и текст включаются, когда есть errorText
                 error={Boolean(errorText)}
                 errorText={errorText ? 'Некорректный пароль' : ''}
                 size="default"

@@ -1,6 +1,5 @@
 import { useSelector, useDispatch } from '@/services/store';
 import { getOrderByNumber } from '@/slices/feedSlice';
-import { getIngredients } from '@/slices/ingredientSlice';
 import { Preloader, OrderInfoUI } from '@ui';
 import { useMemo, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
@@ -13,22 +12,16 @@ export const OrderInfo = (): React.JSX.Element => {
 
   const order = useSelector((state) => state.feed.currentOrder);
   const isLoadingOrder = useSelector((state) => state.feed.isLoading);
-
   const ingredients = useSelector((state) => state.ingredients.data);
-  const isLoadingIngredients = useSelector((state) => state.ingredients.isLoading);
 
   useEffect(() => {
     if (number) {
       void dispatch(getOrderByNumber(Number(number)));
     }
-
-    if (!ingredients.length && !isLoadingIngredients) {
-      void dispatch(getIngredients());
-    }
-  }, [dispatch, number, ingredients.length, isLoadingIngredients]);
+  }, [dispatch, number]);
 
   const orderInfo = useMemo(() => {
-    if (!order || isLoadingOrder || isLoadingIngredients || !ingredients.length) {
+    if (!order || isLoadingOrder || !ingredients.length) {
       return null;
     }
 
@@ -62,7 +55,7 @@ export const OrderInfo = (): React.JSX.Element => {
       date,
       total,
     };
-  }, [order, ingredients, isLoadingOrder, isLoadingIngredients]);
+  }, [order, ingredients, isLoadingOrder]);
 
   if (!orderInfo) {
     return <Preloader />;

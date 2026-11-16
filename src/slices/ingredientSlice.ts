@@ -9,13 +9,21 @@ export const getIngredients = createAsyncThunk('ingredients/fetch', async () => 
   return data;
 });
 
+export type TIngredientsState = {
+  data: TIngredient[];
+  isLoading: boolean;
+  error: SerializedError | null;
+};
+
+export const initialState: TIngredientsState = {
+  data: [],
+  isLoading: false,
+  error: null,
+};
+
 export const ingredientsSlice = createSlice({
   name: 'ingredients',
-  initialState: {
-    data: [] as TIngredient[],
-    isLoading: false,
-    error: null as SerializedError | null,
-  },
+  initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder

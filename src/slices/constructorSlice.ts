@@ -2,12 +2,7 @@ import { orderBurgerApi } from '@/utils/burger-api';
 import { createAsyncThunk, createSlice, nanoid } from '@reduxjs/toolkit';
 
 import type { PayloadAction } from '@reduxjs/toolkit';
-import type {
-  TConstructorIngredient,
-  TConstructorState,
-  TOrder,
-  TIngredient,
-} from '@utils-types';
+import type { TConstructorIngredient, TOrder, TIngredient } from '@utils-types';
 
 export const createOrder = createAsyncThunk<TOrder, string[]>(
   'burgerConstructor/createOrder',
@@ -17,16 +12,27 @@ export const createOrder = createAsyncThunk<TOrder, string[]>(
   }
 );
 
+export type TConstructorSliceState = {
+  constructorItems: {
+    bun: TConstructorIngredient | null;
+    ingredients: TConstructorIngredient[];
+  };
+  orderRequest: boolean;
+  orderModalData: TOrder | null;
+};
+
+export const initialState: TConstructorSliceState = {
+  constructorItems: {
+    bun: null,
+    ingredients: [],
+  },
+  orderRequest: false,
+  orderModalData: null,
+};
+
 export const constructorSlice = createSlice({
   name: 'burgerConstructor',
-  initialState: {
-    constructorItems: {
-      bun: null as TConstructorIngredient | null,
-      ingredients: [] as TConstructorIngredient[],
-    } as TConstructorState,
-    orderRequest: false,
-    orderModalData: null as TOrder | null,
-  },
+  initialState,
   reducers: {
     addItem: {
       prepare: (item: TIngredient) => ({
@@ -52,7 +58,6 @@ export const constructorSlice = createSlice({
         state.constructorItems.bun = null;
     },
     clearOrder: (state) => {
-      state.constructorItems = { bun: null, ingredients: [] };
       state.orderModalData = null;
     },
     moveIngredient: (
@@ -81,6 +86,10 @@ export const constructorSlice = createSlice({
       .addCase(createOrder.fulfilled, (state, action) => {
         state.orderRequest = false;
         state.orderModalData = action.payload;
+        state.constructorItems = {
+          bun: null,
+          ingredients: [],
+        };
       })
       .addCase(createOrder.rejected, (state) => {
         state.orderRequest = false;

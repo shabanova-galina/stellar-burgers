@@ -9,6 +9,7 @@ import { setCookie, deleteCookie } from '@/utils/cookie';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 import type { TRegisterData, TLoginData } from '@/utils/burger-api';
+import type { TUser } from '@/utils/types';
 import type { SerializedError } from '@reduxjs/toolkit';
 
 export const updateUser = createAsyncThunk(
@@ -48,17 +49,26 @@ export const getUser = createAsyncThunk('auth/fetch', async () => {
   return response;
 });
 
+export type TAuthState = {
+  user: TUser;
+  loggedIn: boolean;
+  isAuthChecked: boolean;
+  error: SerializedError | null;
+};
+
+export const initialState: TAuthState = {
+  user: {
+    name: '',
+    email: '',
+  },
+  loggedIn: false,
+  isAuthChecked: false,
+  error: null,
+};
+
 export const authSlice = createSlice({
   name: 'auth',
-  initialState: {
-    user: {
-      name: '',
-      email: '',
-    },
-    loggedIn: false,
-    isAuthChecked: false,
-    error: null as SerializedError | null,
-  },
+  initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder

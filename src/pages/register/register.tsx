@@ -2,7 +2,6 @@ import { useDispatch } from '@/services/store';
 import { registerUser } from '@/slices/authSlice';
 import { RegisterUI } from '@ui-pages';
 import { type SyntheticEvent, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
 
 export const Register = (): React.JSX.Element => {
   const [userName, setUserName] = useState('');
@@ -10,25 +9,21 @@ export const Register = (): React.JSX.Element => {
   const [password, setPassword] = useState('');
 
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const state = location.state as { from?: string } | null;
-  const from = state?.from ?? '/';
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e: SyntheticEvent): Promise<void> => {
     e.preventDefault();
+    setError('');
     try {
-      await dispatch(registerUser({ email, password, name: userName }));
-      void navigate(from, { replace: true });
-    } catch (error) {
-      console.error('Ошибка регистрации:', error);
+      await dispatch(registerUser({ email, password, name: userName })).unwrap();
+    } catch (err) {
+      setError((err as Error).message || 'Ошибка регистрации');
     }
   };
 
   return (
     <RegisterUI
-      errorText=""
+      errorText={error}
       email={email}
       userName={userName}
       password={password}

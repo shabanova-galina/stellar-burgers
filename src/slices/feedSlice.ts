@@ -16,16 +16,27 @@ export const getOrderByNumber = createAsyncThunk(
   }
 );
 
+export type TFeedState = {
+  orders: TOrder[];
+  total: number;
+  totalToday: number;
+  isLoading: boolean;
+  error: string | null;
+  currentOrder: TOrder | null;
+};
+
+export const initialState: TFeedState = {
+  orders: [],
+  total: 0,
+  totalToday: 0,
+  isLoading: false,
+  error: null,
+  currentOrder: null,
+};
+
 export const feedSlice = createSlice({
   name: 'feed',
-  initialState: {
-    orders: [] as TOrder[],
-    total: 0 as number,
-    totalToday: 0 as number,
-    isLoading: false as boolean,
-    error: null as string | null,
-    currentOrder: null as TOrder | null,
-  },
+  initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
